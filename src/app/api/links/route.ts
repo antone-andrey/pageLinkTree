@@ -41,18 +41,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = linkSchema.parse(body);
 
-    // Validate URL format
-    const cleanUrl = sanitizeUrl(data.url);
-    if (!isValidUrl(cleanUrl)) {
+    // Sanitize fields
+    data.title = sanitizeString(data.title);
+    data.url = sanitizeUrl(data.url);
+
+    // Validate URL format after sanitization
+    if (!isValidUrl(data.url)) {
       return NextResponse.json(
         { error: "Invalid URL format. URL must start with http:// or https://" },
         { status: 400 }
       );
     }
-
-    // Sanitize title field
-    data.title = sanitizeString(data.title);
-    data.url = cleanUrl;
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -87,7 +86,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(link, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json({ error: "Invalid input" }, { status: 422 });
+      const zodError = error as { errors?: { message: string; path: string[] }[] };
+      const message = zodError.errors?.[0]?.message || "Invalid input";
+      return NextResponse.json({ error: message }, { status: 422 });
     }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

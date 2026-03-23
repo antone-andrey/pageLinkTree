@@ -19,8 +19,14 @@ export const usernameSchema = z
 
 export const linkSchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
-  url: z.string().url("Invalid URL"),
-  iconUrl: z.string().url().optional().or(z.literal("")),
+  url: z.string().min(1, "URL is required").transform((val) => {
+    const trimmed = val.trim();
+    if (trimmed && !trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+      return `https://${trimmed}`;
+    }
+    return trimmed;
+  }),
+  iconUrl: z.string().optional().or(z.literal("")),
 });
 
 export const profileSchema = z.object({
