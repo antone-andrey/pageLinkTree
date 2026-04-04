@@ -62,8 +62,10 @@ export default function RootLayout({
               operatingSystem: "Web",
               offers: [
                 { "@type": "Offer", price: "0", priceCurrency: "USD", name: "Free" },
-                { "@type": "Offer", price: "12", priceCurrency: "USD", name: "Pro", billingIncrement: "P1M" },
-                { "@type": "Offer", price: "24", priceCurrency: "USD", name: "Business", billingIncrement: "P1M" },
+                { "@type": "Offer", price: "7", priceCurrency: "USD", name: "Pro (Founding Member)", billingIncrement: "P1M", description: "Founding Member pricing — locked in forever. Regular price $12/mo." },
+                { "@type": "Offer", price: "5", priceCurrency: "USD", name: "Pro Annual (Founding Member)", billingIncrement: "P1Y", description: "Founding Member pricing — $60/yr, locked in forever. Regular price $10/mo." },
+                { "@type": "Offer", price: "14", priceCurrency: "USD", name: "Business (Founding Member)", billingIncrement: "P1M", description: "Founding Member pricing — locked in forever. Regular price $24/mo." },
+                { "@type": "Offer", price: "10", priceCurrency: "USD", name: "Business Annual (Founding Member)", billingIncrement: "P1Y", description: "Founding Member pricing — $120/yr, locked in forever. Regular price $19/mo." },
               ],
               description: "Link-in-bio with built-in booking and payments.",
               url: "https://linktreebooking.vercel.app",
@@ -114,10 +116,28 @@ export default function RootLayout({
                   name: "Is there a free trial for PageDrop Pro?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "The free plan is fully functional — it's not a trial. When you're ready for unlimited links, custom domains, and 0% fees, upgrade to Pro for $12/mo.",
+                    text: "The free plan is fully functional — it's not a trial. When you're ready for unlimited links, custom domains, and 0% fees, upgrade to Pro for $7/mo with Founding Member pricing (regular $12/mo).",
                   },
                 },
               ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "PageDrop",
+              url: "https://linktreebooking.vercel.app",
+              logo: "https://linktreebooking.vercel.app/icon.png",
+              sameAs: [
+                "https://twitter.com/pagedrop",
+                "https://github.com/pagedrop",
+              ],
+              description:
+                "Link-in-bio platform with built-in booking and payments.",
             }),
           }}
         />

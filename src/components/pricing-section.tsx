@@ -8,6 +8,8 @@ const plans = [
     name: "Free",
     monthlyPrice: 0,
     annualPrice: 0,
+    foundingMonthlyPrice: 0,
+    foundingAnnualPrice: 0,
     period: "forever",
     desc: "Everything you need to get started.",
     features: ["1 page", "10 links", "Booking", "1 payment button", "3% platform fee"],
@@ -16,6 +18,10 @@ const plans = [
     name: "Pro",
     monthlyPrice: 12,
     annualPrice: 10,
+    foundingMonthlyPrice: 7,
+    foundingAnnualPrice: 5,
+    monthlySavePercent: 42,
+    annualSavePercent: 50,
     period: "/month",
     desc: "For creators who mean business.",
     popular: true,
@@ -33,6 +39,10 @@ const plans = [
     name: "Business",
     monthlyPrice: 24,
     annualPrice: 19,
+    foundingMonthlyPrice: 14,
+    foundingAnnualPrice: 10,
+    monthlySavePercent: 42,
+    annualSavePercent: 47,
     period: "/month",
     desc: "For teams and power users.",
     features: [
@@ -52,6 +62,15 @@ export default function PricingSection() {
 
   return (
     <section id="pricing" className="relative max-w-5xl mx-auto px-6 py-24">
+      {/* Founding Member Banner */}
+      <div className="flex justify-center mb-8">
+        <div className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg shadow-indigo-500/25 animate-pulse">
+          <span className="text-sm sm:text-base font-semibold text-white">
+            🚀 Founding Member Pricing — First 500 members lock in these rates forever
+          </span>
+        </div>
+      </div>
+
       <div className="text-center mb-10">
         <p className="text-sm font-semibold text-indigo-400 tracking-wide uppercase mb-3">Pricing</p>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -90,9 +109,11 @@ export default function PricingSection() {
 
       <div className="grid md:grid-cols-3 gap-5">
         {plans.map((plan) => {
-          const price = plan.monthlyPrice === 0 ? 0 : annual ? plan.annualPrice : plan.monthlyPrice;
+          const regularPrice = plan.monthlyPrice === 0 ? 0 : annual ? plan.annualPrice : plan.monthlyPrice;
+          const foundingPrice = plan.monthlyPrice === 0 ? 0 : annual ? plan.foundingAnnualPrice : plan.foundingMonthlyPrice;
+          const savePercent = plan.monthlyPrice === 0 ? 0 : (annual ? plan.annualSavePercent : plan.monthlySavePercent) ?? 0;
           const billedText =
-            plan.monthlyPrice === 0 ? null : annual ? `Billed $${price * 12}/year` : null;
+            plan.monthlyPrice === 0 ? null : annual ? `$${foundingPrice * 12}/yr` : null;
 
           return (
             <div
@@ -114,28 +135,39 @@ export default function PricingSection() {
                 </div>
               )}
 
-              <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+                {savePercent > 0 && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                    SAVE {savePercent}%
+                  </span>
+                )}
+              </div>
               <p className="text-sm mt-1 text-gray-500">{plan.desc}</p>
 
-              <div className="mt-5 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold tracking-tight text-white">
-                  ${price}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {plan.monthlyPrice === 0 ? "forever" : "/month"}
-                </span>
+              <div className="mt-5">
+                {plan.monthlyPrice > 0 && (
+                  <div className="mb-1">
+                    <span className="text-sm text-gray-600 line-through">
+                      ${regularPrice}/mo
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-extrabold tracking-tight text-white">
+                    ${foundingPrice}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {plan.monthlyPrice === 0 ? "forever" : "/month"}
+                  </span>
+                </div>
               </div>
 
-              {annual && plan.monthlyPrice > 0 && (
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="text-sm line-through text-gray-600">
-                    ${plan.monthlyPrice}/mo
+              {annual && plan.monthlyPrice > 0 && billedText && (
+                <div className="mt-1">
+                  <span className="text-xs text-gray-600">
+                    Billed {billedText}
                   </span>
-                  {billedText && (
-                    <span className="text-xs text-gray-600">
-                      {billedText}
-                    </span>
-                  )}
                 </div>
               )}
 
@@ -165,6 +197,14 @@ export default function PricingSection() {
             </div>
           );
         })}
+      </div>
+
+      {/* Urgency element */}
+      <div className="mt-10 text-center">
+        <p className="text-sm text-gray-500">
+          <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse mr-2 align-middle" />
+          Limited spots remaining — offer ends when 500 members join or in 60 days
+        </p>
       </div>
     </section>
   );
