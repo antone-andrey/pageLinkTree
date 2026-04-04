@@ -65,7 +65,7 @@ export function PublicProfile({ user, links, services, theme, showBranding = tru
       "@type": "Person",
       name: user.name,
       description: user.bio || undefined,
-      url: `https://linktreebooking.vercel.app/${user.username}`,
+      url: `https://page-drop.com/${user.username}`,
       image: user.avatarUrl || undefined,
     },
   };

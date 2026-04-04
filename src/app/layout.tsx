@@ -6,7 +6,7 @@ import { Providers } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://linktreebooking.vercel.app"),
+  metadataBase: new URL("https://page-drop.com"),
   title: "PageDrop — One link. Get paid, get booked, get followed.",
   description:
     "Link-in-bio with built-in booking and payments. Replace Linktree + Calendly + Stripe with one link.",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "PageDrop — One link. Get paid, get booked, get followed.",
     description: "The link-in-bio that actually makes you money. Share links, book clients, accept payments — all from one page.",
-    url: "https://linktreebooking.vercel.app",
+    url: "https://page-drop.com",
     siteName: "PageDrop",
     images: [
       {
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   alternates: {
-    canonical: "https://linktreebooking.vercel.app",
+    canonical: "https://page-drop.com",
   },
   robots: {
     index: true,
@@ -68,7 +68,7 @@ export default function RootLayout({
                 { "@type": "Offer", price: "10", priceCurrency: "USD", name: "Business Annual (Founding Member)", billingIncrement: "P1Y", description: "Founding Member pricing — $120/yr, locked in forever. Regular price $19/mo." },
               ],
               description: "Link-in-bio with built-in booking and payments.",
-              url: "https://linktreebooking.vercel.app",
+              url: "https://page-drop.com",
             }),
           }}
         />
@@ -79,8 +79,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "PageDrop",
-              url: "https://linktreebooking.vercel.app",
-              logo: "https://linktreebooking.vercel.app/icon.png",
+              url: "https://page-drop.com",
+              logo: "https://page-drop.com/icon.png",
               sameAs: [
                 "https://twitter.com/pagedrop",
                 "https://github.com/pagedrop",

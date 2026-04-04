@@ -78,7 +78,7 @@ const faqs = [
   { q: "How is this different from Linktree?", a: "Linktree is a link list. PageDrop is a link list + booking system + payment processor in one. You replace 3 tools with one and keep more of your revenue." },
   { q: "Do I need a Stripe account?", a: "Only if you want to accept payments. Booking and link sharing work without Stripe. When you're ready, connecting Stripe takes about 2 minutes." },
   { q: "What happens to my money?", a: "Payments go directly to your Stripe account via Stripe Connect. PageDrop never holds your money. On the free plan there's a 3% platform fee; on Pro it's 0%." },
-  { q: "Can I use my own domain?", a: "Yes! Pro and Business plans support custom domains. You can use yourname.com instead of pagedrop.link/yourname." },
+  { q: "Can I use my own domain?", a: "Yes! Pro and Business plans support custom domains. You can use yourname.com instead of page-drop.com/yourname." },
   { q: "What if I want to cancel?", a: "Cancel anytime with one click. No contracts, no cancellation fees. Your page stays live on the free plan." },
   { q: "Is there a free trial for Pro?", a: "The free plan is fully functional — it's not a trial. When you're ready for unlimited links, custom domains, and 0% fees, upgrade to Pro for $12/mo." },
 ];
@@ -108,7 +108,7 @@ export default function LandingPage() {
             "@type": "Product",
             name: "PageDrop",
             description: "Link-in-bio platform with built-in booking and payments.",
-            url: "https://linktreebooking.vercel.app",
+            url: "https://page-drop.com",
             aggregateRating: {
               "@type": "AggregateRating",
               ratingValue: "5",
@@ -145,7 +145,7 @@ export default function LandingPage() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "https://linktreebooking.vercel.app" },
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://page-drop.com" },
             ],
           }),
         }}

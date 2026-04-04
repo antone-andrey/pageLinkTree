@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://linktreebooking.vercel.app";
+  const baseUrl = "https://page-drop.com";
 
   // Fetch all published user pages
   const publishedPages = await prisma.page.findMany({

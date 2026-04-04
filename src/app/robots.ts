@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/dashboard/", "/onboarding/", "/api/"],
       },
     ],
-    sitemap: "https://linktreebooking.vercel.app/sitemap.xml",
+    sitemap: "https://page-drop.com/sitemap.xml",
   };
 }

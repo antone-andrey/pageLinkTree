@@ -149,7 +149,7 @@ export default async function Image({ params }: { params: { username: string } }
             color: "rgba(107, 114, 128, 1)",
           }}
         >
-          linktreebooking.vercel.app/{params.username}
+          page-drop.com/{params.username}
         </div>
       </div>
     ),

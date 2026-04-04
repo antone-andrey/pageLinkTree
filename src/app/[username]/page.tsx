@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const displayName = user.name || user.username;
   const description = user.bio || `Check out ${displayName}'s page on PageDrop`;
-  const canonicalUrl = `https://linktreebooking.vercel.app/${user.username}`;
+  const canonicalUrl = `https://page-drop.com/${user.username}`;
   const isPublished = user.page?.isPublished ?? false;
 
   return {

@@ -150,7 +150,7 @@ export default async function Image() {
             color: "rgba(107, 114, 128, 1)",
           }}
         >
-          linktreebooking.vercel.app · Free to start
+          page-drop.com · Free to start
         </div>
       </div>
     ),

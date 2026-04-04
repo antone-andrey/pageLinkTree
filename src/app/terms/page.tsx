@@ -18,7 +18,7 @@ export default function TermsPage() {
             name: "Terms of Service",
             description: "Read the terms and conditions for using the PageDrop platform.",
             dateModified: "2026-03-01",
-            publisher: { "@type": "Organization", name: "PageDrop", url: "https://linktreebooking.vercel.app" },
+            publisher: { "@type": "Organization", name: "PageDrop", url: "https://page-drop.com" },
           }),
         }}
       />

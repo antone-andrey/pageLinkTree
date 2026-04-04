@@ -18,7 +18,7 @@ export default function PrivacyPage() {
             name: "Privacy Policy",
             description: "Learn how PageDrop collects, uses, and protects your personal information.",
             dateModified: "2026-03-01",
-            publisher: { "@type": "Organization", name: "PageDrop", url: "https://linktreebooking.vercel.app" },
+            publisher: { "@type": "Organization", name: "PageDrop", url: "https://page-drop.com" },
           }),
         }}
       />
