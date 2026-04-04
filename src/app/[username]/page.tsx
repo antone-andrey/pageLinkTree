@@ -5,6 +5,24 @@ import { themes } from "@/lib/themes";
 import { auth } from "@/lib/auth";
 import { PublicProfile } from "./public-profile";
 
+// ISR: revalidate every hour so popular profiles stay fresh
+export const revalidate = 3600;
+
+// Pre-render the top 100 published profiles at build time
+export async function generateStaticParams() {
+  try {
+    const pages = await prisma.page.findMany({
+      where: { isPublished: true },
+      select: { user: { select: { username: true } } },
+      take: 100,
+    });
+    return pages.map((page) => ({ username: page.user.username }));
+  } catch {
+    // DB unreachable at build time — fall back to on-demand rendering
+    return [];
+  }
+}
+
 interface Props {
   params: { username: string };
 }

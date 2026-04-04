@@ -40,6 +40,24 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: "/:path*.(woff2|woff|ttf|otf)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/:path*.(jpg|jpeg|png|gif|webp|svg|ico)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store" },
+        ],
+      },
     ];
   },
 };

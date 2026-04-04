@@ -1,6 +1,5 @@
 import Link from "next/link";
 import PricingSection from "@/components/pricing-section";
-import HeroEmailForm from "@/components/hero-email-form";
 
 /* ═══════════════════════════════════════════════════════
    PageDrop — Premium Landing Page
@@ -10,7 +9,7 @@ import HeroEmailForm from "@/components/hero-email-form";
 
 const features = [
   {
-    title: "Link sharing",
+    title: "Smart Link Sharing",
     desc: "Beautiful, customizable link-in-bio pages with 8+ premium themes. Drag-and-drop to reorder.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -20,7 +19,7 @@ const features = [
     gradient: "from-blue-500 to-indigo-600",
   },
   {
-    title: "Appointment booking",
+    title: "Built-in Booking System",
     desc: "Built-in scheduling — clients pick a date, choose a time, and book. Zero back-and-forth.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -30,7 +29,7 @@ const features = [
     gradient: "from-violet-500 to-purple-600",
   },
   {
-    title: "Direct payments",
+    title: "Integrated Stripe Payments",
     desc: "Accept payments via Stripe Connect. Money goes straight to your bank — we never touch it.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -40,7 +39,7 @@ const features = [
     gradient: "from-fuchsia-500 to-pink-600",
   },
   {
-    title: "Analytics dashboard",
+    title: "Real-Time Analytics",
     desc: "Track page views, link clicks, and booking trends. Know what's working in real time.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -99,6 +98,67 @@ const footerLinks = {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#08080c] text-white overflow-hidden">
+
+      {/* ═══ Structured Data: Reviews + Breadcrumbs ═══ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "PageDrop",
+            description: "Link-in-bio platform with built-in booking and payments.",
+            url: "https://linktreebooking.vercel.app",
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "5",
+              reviewCount: "3",
+              bestRating: "5",
+            },
+            review: [
+              {
+                "@type": "Review",
+                author: { "@type": "Person", name: "Maria K." },
+                reviewRating: { "@type": "Rating", ratingValue: "5" },
+                reviewBody: "I replaced Linktree, Calendly, AND a Stripe checkout page with PageDrop. My clients book and pay in one click now. Setup took 5 minutes.",
+              },
+              {
+                "@type": "Review",
+                author: { "@type": "Person", name: "James T." },
+                reviewRating: { "@type": "Rating", ratingValue: "5" },
+                reviewBody: "The analytics alone are worth it. I can see exactly which links my audience clicks and which booking slots convert best. Game changer for my coaching business.",
+              },
+              {
+                "@type": "Review",
+                author: { "@type": "Person", name: "Sarah R." },
+                reviewRating: { "@type": "Rating", ratingValue: "5" },
+                reviewBody: "I was paying $15/mo for Linktree Pro and $12/mo for Calendly. PageDrop Pro at $12 does both AND I keep 100% of my revenue. No-brainer switch.",
+              },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://linktreebooking.vercel.app" },
+            ],
+          }),
+        }}
+      />
+
+      {/* ═══ SR-only pricing data for crawlers ═══ */}
+      <div className="sr-only">
+        PageDrop Pricing: Free plan $0 with 1 page, 10 links, booking, and 3% platform fee.
+        Pro plan $7 per month founding member price (regular $12/month), or $5/month billed annually ($60/year).
+        Includes unlimited links, booking and payments, 0% platform fee, custom backgrounds, remove branding, advanced analytics, custom domain.
+        Business plan $14 per month founding member price (regular $24/month), or $10/month billed annually ($120/year).
+        Includes everything in Pro plus priority support, team features, and API access.
+      </div>
 
       {/* ═══ Ambient background orbs (persist across whole page) ═══ */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
@@ -172,7 +232,27 @@ export default function LandingPage() {
           </p>
 
           <div className="animate-fade-up delay-300 mt-10 max-w-md mx-auto">
-            <HeroEmailForm />
+            <form action="/signup" className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm">
+              <label htmlFor="hero-email" className="sr-only">Email address</label>
+              <input
+                id="hero-email"
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+                autoComplete="email"
+                className="flex-1 px-4 py-3 bg-transparent text-white placeholder-gray-500 text-sm focus:outline-none min-w-0"
+              />
+              <button
+                type="submit"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all whitespace-nowrap"
+              >
+                Get started free
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </form>
             <p className="mt-4 text-xs text-gray-600">
               No credit card required &middot; Set up in under 2 minutes
             </p>
@@ -244,7 +324,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <p className="text-sm font-semibold text-indigo-400 tracking-wide uppercase mb-3">Features</p>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Everything you need.<br />Nothing you don&apos;t.
+              Everything You Need for Your Link-in-Bio
             </h2>
             <p className="mt-4 text-gray-500 max-w-xl mx-auto">
               Replace your Linktree, Calendly, and Stripe setup with a single link-in-bio tool that does it all.

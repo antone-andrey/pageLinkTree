@@ -77,57 +77,6 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: [
-                {
-                  "@type": "Question",
-                  name: "How is PageDrop different from Linktree?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Linktree is a link list. PageDrop is a link list + booking system + payment processor in one. You replace 3 tools with one and keep more of your revenue.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Do I need a Stripe account to use PageDrop?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Only if you want to accept payments. Booking and link sharing work without Stripe. When you're ready, connecting Stripe takes about 2 minutes.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "What happens to my money on PageDrop?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Payments go directly to your Stripe account via Stripe Connect. PageDrop never holds your money. On the free plan there's a 3% platform fee; on Pro it's 0%.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Can I use my own domain with PageDrop?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Yes! Pro and Business plans support custom domains. You can use yourname.com instead of pagedrop.link/yourname.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Is there a free trial for PageDrop Pro?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "The free plan is fully functional — it's not a trial. When you're ready for unlimited links, custom domains, and 0% fees, upgrade to Pro for $7/mo with Founding Member pricing (regular $12/mo).",
-                  },
-                },
-              ],
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
               "@type": "Organization",
               name: "PageDrop",
               url: "https://linktreebooking.vercel.app",
