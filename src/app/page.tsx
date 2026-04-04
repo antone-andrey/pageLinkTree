@@ -536,9 +536,7 @@ export default function LandingPage() {
             <div className="mt-12 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-3">
               <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} PageDrop. All rights reserved.</p>
               <p className="text-xs text-gray-600">
-                Built with{" "}
-                <svg className="w-3 h-3 text-red-400/60 inline-block" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
-                {" "}using Next.js, Tailwind CSS &amp; Stripe
+                One link to share, book &amp; get paid.
               </p>
             </div>
           </div>
