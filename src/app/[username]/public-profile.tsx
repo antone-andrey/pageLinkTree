@@ -58,8 +58,24 @@ export function PublicProfile({ user, links, services, theme, showBranding = tru
     position: "relative",
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: user.name,
+      description: user.bio || undefined,
+      url: `https://page-drop.com/${user.username}`,
+      image: user.avatarUrl || undefined,
+    },
+  };
+
   return (
     <div style={pageStyle}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Owner admin bar */}
       {isOwner && (
         <div

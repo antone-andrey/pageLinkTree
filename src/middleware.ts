@@ -21,17 +21,30 @@ export default auth((req) => {
   const isLoggedIn = !!session;
   const pathname = nextUrl.pathname;
 
+  // Trailing slash normalization (308 permanent redirect)
+  if (pathname !== '/' && pathname.endsWith('/')) {
+    const url = new URL(pathname.slice(0, -1), nextUrl);
+    return NextResponse.redirect(url, 308);
+  }
+
   const isAuthPage =
     pathname === "/login" ||
     pathname === "/signup" ||
     pathname === "/forgot-password" ||
     pathname === "/reset-password";
 
-  // Redirect logged-in users away from auth pages
-  if (isAuthPage && isLoggedIn) {
-    return applySecurityHeaders(
-      NextResponse.redirect(new URL("/dashboard", nextUrl))
-    );
+  // Add X-Robots-Tag noindex for auth pages
+  if (isAuthPage) {
+    // Redirect logged-in users away from auth pages
+    if (isLoggedIn) {
+      return applySecurityHeaders(
+        NextResponse.redirect(new URL("/dashboard", nextUrl))
+      );
+    }
+
+    const response = NextResponse.next();
+    response.headers.set("X-Robots-Tag", "noindex, follow");
+    return applySecurityHeaders(response);
   }
 
   // Protect dashboard routes
@@ -59,5 +72,6 @@ export const config = {
     "/signup",
     "/forgot-password",
     "/reset-password",
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

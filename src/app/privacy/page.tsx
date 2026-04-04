@@ -9,6 +9,19 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "Privacy Policy",
+            description: "Learn how PageDrop collects, uses, and protects your personal information.",
+            dateModified: "2026-03-01",
+            publisher: { "@type": "Organization", name: "PageDrop", url: "https://page-drop.com" },
+          }),
+        }}
+      />
       <div className="max-w-3xl mx-auto px-6 py-20">
         <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-700 mb-8 inline-block">&larr; Back to home</Link>
         <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Privacy Policy</h1>

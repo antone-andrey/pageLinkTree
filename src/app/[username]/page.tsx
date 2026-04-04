@@ -5,6 +5,24 @@ import { themes } from "@/lib/themes";
 import { auth } from "@/lib/auth";
 import { PublicProfile } from "./public-profile";
 
+// ISR: revalidate every hour so popular profiles stay fresh
+export const revalidate = 3600;
+
+// Pre-render the top 100 published profiles at build time
+export async function generateStaticParams() {
+  try {
+    const pages = await prisma.page.findMany({
+      where: { isPublished: true },
+      select: { user: { select: { username: true } } },
+      take: 100,
+    });
+    return pages.map((page) => ({ username: page.user.username }));
+  } catch {
+    // DB unreachable at build time — fall back to on-demand rendering
+    return [];
+  }
+}
+
 interface Props {
   params: { username: string };
 }
@@ -12,19 +30,36 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const user = await prisma.user.findUnique({
     where: { username: params.username },
-    select: { name: true, bio: true, username: true },
+    select: { name: true, bio: true, username: true, page: { select: { isPublished: true } } },
   });
 
   if (!user) return {};
 
+  const displayName = user.name || user.username;
+  const description = user.bio || `Check out ${displayName}'s page on PageDrop`;
+  const canonicalUrl = `https://page-drop.com/${user.username}`;
+  const isPublished = user.page?.isPublished ?? false;
+
   return {
-    title: `${user.name || user.username} — PageDrop`,
-    description: user.bio || `Check out ${user.name || user.username}'s page on PageDrop`,
-    openGraph: {
-      title: `${user.name || user.username} — PageDrop`,
-      description: user.bio || `Check out ${user.name || user.username}'s page on PageDrop`,
-      type: "profile",
+    title: `${displayName} — PageDrop`,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
     },
+    openGraph: {
+      title: `${displayName} — PageDrop`,
+      description,
+      type: "profile",
+      url: canonicalUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${displayName} — PageDrop`,
+      description,
+    },
+    robots: isPublished
+      ? { index: true, follow: true }
+      : { index: false },
   };
 }
 

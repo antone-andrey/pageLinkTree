@@ -9,7 +9,7 @@ import PricingSection from "@/components/pricing-section";
 
 const features = [
   {
-    title: "Link sharing",
+    title: "Smart Link Sharing",
     desc: "Beautiful, customizable link-in-bio pages with 8+ premium themes. Drag-and-drop to reorder.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -19,7 +19,7 @@ const features = [
     gradient: "from-blue-500 to-indigo-600",
   },
   {
-    title: "Appointment booking",
+    title: "Built-in Booking System",
     desc: "Built-in scheduling — clients pick a date, choose a time, and book. Zero back-and-forth.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -29,7 +29,7 @@ const features = [
     gradient: "from-violet-500 to-purple-600",
   },
   {
-    title: "Direct payments",
+    title: "Integrated Stripe Payments",
     desc: "Accept payments via Stripe Connect. Money goes straight to your bank — we never touch it.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -39,7 +39,7 @@ const features = [
     gradient: "from-fuchsia-500 to-pink-600",
   },
   {
-    title: "Analytics dashboard",
+    title: "Real-Time Analytics",
     desc: "Track page views, link clicks, and booking trends. Know what's working in real time.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -78,7 +78,7 @@ const faqs = [
   { q: "How is this different from Linktree?", a: "Linktree is a link list. PageDrop is a link list + booking system + payment processor in one. You replace 3 tools with one and keep more of your revenue." },
   { q: "Do I need a Stripe account?", a: "Only if you want to accept payments. Booking and link sharing work without Stripe. When you're ready, connecting Stripe takes about 2 minutes." },
   { q: "What happens to my money?", a: "Payments go directly to your Stripe account via Stripe Connect. PageDrop never holds your money. On the free plan there's a 3% platform fee; on Pro it's 0%." },
-  { q: "Can I use my own domain?", a: "Yes! Pro and Business plans support custom domains. You can use yourname.com instead of pagedrop.link/yourname." },
+  { q: "Can I use my own domain?", a: "Yes! Pro and Business plans support custom domains. You can use yourname.com instead of page-drop.com/yourname." },
   { q: "What if I want to cancel?", a: "Cancel anytime with one click. No contracts, no cancellation fees. Your page stays live on the free plan." },
   { q: "Is there a free trial for Pro?", a: "The free plan is fully functional — it's not a trial. When you're ready for unlimited links, custom domains, and 0% fees, upgrade to Pro for $12/mo." },
 ];
@@ -98,6 +98,67 @@ const footerLinks = {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#08080c] text-white overflow-hidden">
+
+      {/* ═══ Structured Data: Reviews + Breadcrumbs ═══ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "PageDrop",
+            description: "Link-in-bio platform with built-in booking and payments.",
+            url: "https://page-drop.com",
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "5",
+              reviewCount: "3",
+              bestRating: "5",
+            },
+            review: [
+              {
+                "@type": "Review",
+                author: { "@type": "Person", name: "Maria K." },
+                reviewRating: { "@type": "Rating", ratingValue: "5" },
+                reviewBody: "I replaced Linktree, Calendly, AND a Stripe checkout page with PageDrop. My clients book and pay in one click now. Setup took 5 minutes.",
+              },
+              {
+                "@type": "Review",
+                author: { "@type": "Person", name: "James T." },
+                reviewRating: { "@type": "Rating", ratingValue: "5" },
+                reviewBody: "The analytics alone are worth it. I can see exactly which links my audience clicks and which booking slots convert best. Game changer for my coaching business.",
+              },
+              {
+                "@type": "Review",
+                author: { "@type": "Person", name: "Sarah R." },
+                reviewRating: { "@type": "Rating", ratingValue: "5" },
+                reviewBody: "I was paying $15/mo for Linktree Pro and $12/mo for Calendly. PageDrop Pro at $12 does both AND I keep 100% of my revenue. No-brainer switch.",
+              },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://page-drop.com" },
+            ],
+          }),
+        }}
+      />
+
+      {/* ═══ SR-only pricing data for crawlers ═══ */}
+      <div className="sr-only">
+        PageDrop Pricing: Free plan $0 with 1 page, 10 links, booking, and 3% platform fee.
+        Pro plan $7 per month founding member price (regular $12/month), or $5/month billed annually ($60/year).
+        Includes unlimited links, booking and payments, 0% platform fee, custom backgrounds, remove branding, advanced analytics, custom domain.
+        Business plan $14 per month founding member price (regular $24/month), or $10/month billed annually ($120/year).
+        Includes everything in Pro plus priority support, team features, and API access.
+      </div>
 
       {/* ═══ Ambient background orbs (persist across whole page) ═══ */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
@@ -171,7 +232,7 @@ export default function LandingPage() {
           </p>
 
           <div className="animate-fade-up delay-300 mt-10 max-w-md mx-auto">
-            <form action="/signup" method="GET" className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm">
+            <form action="/signup" className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm">
               <label htmlFor="hero-email" className="sr-only">Email address</label>
               <input
                 id="hero-email"
@@ -263,7 +324,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <p className="text-sm font-semibold text-indigo-400 tracking-wide uppercase mb-3">Features</p>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Everything you need.<br />Nothing you don&apos;t.
+              Everything You Need for Your Link-in-Bio
             </h2>
             <p className="mt-4 text-gray-500 max-w-xl mx-auto">
               Replace your Linktree, Calendly, and Stripe setup with a single link-in-bio tool that does it all.
@@ -453,7 +514,7 @@ export default function LandingPage() {
                     { label: "Twitter", d: "M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" },
                     { label: "GitHub", d: "M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" },
                   ].map(({ label, d }) => (
-                    <a key={label} href="#" aria-label={label} className="w-9 h-9 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] flex items-center justify-center transition-colors">
+                    <a key={label} href={label === "Twitter" ? "https://twitter.com/pagedrop" : "https://github.com/pagedrop"} aria-label={label} className="w-9 h-9 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] flex items-center justify-center transition-colors" rel="noopener noreferrer" target="_blank">
                       <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d={d} /></svg>
                     </a>
                   ))}
@@ -475,9 +536,7 @@ export default function LandingPage() {
             <div className="mt-12 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-3">
               <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} PageDrop. All rights reserved.</p>
               <p className="text-xs text-gray-600">
-                Built with{" "}
-                <svg className="w-3 h-3 text-red-400/60 inline-block" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
-                {" "}using Next.js, Tailwind CSS &amp; Stripe
+                One link to share, book &amp; get paid.
               </p>
             </div>
           </div>
