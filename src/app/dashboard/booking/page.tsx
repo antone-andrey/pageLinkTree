@@ -27,6 +27,25 @@ interface Booking {
   service: { name: string; durationMins: number; price: number };
 }
 
+interface AvailabilitySlot {
+  id?: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  bufferMins: number;
+  timezone?: string;
+  isActive?: boolean;
+}
+
+const DAY_LABELS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const DEFAULT_AVAILABILITY: AvailabilitySlot[] = Array.from({ length: 7 }, (_, i) => ({
+  dayOfWeek: i,
+  startTime: "09:00",
+  endTime: "17:00",
+  bufferMins: 15,
+}));
+
 export default function BookingPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -38,10 +57,29 @@ export default function BookingPage() {
     price: 0,
   });
   const [saving, setSaving] = useState(false);
+  const [availability, setAvailability] = useState<AvailabilitySlot[]>(DEFAULT_AVAILABILITY);
+  const [enabledDays, setEnabledDays] = useState<Set<number>>(new Set([1, 2, 3, 4, 5]));
+  const [savingAvailability, setSavingAvailability] = useState(false);
 
   useEffect(() => {
     fetch("/api/services").then((r) => r.json()).then(setServices);
     fetch("/api/bookings").then((r) => r.json()).then(setBookings);
+    fetch("/api/availability")
+      .then((r) => r.json())
+      .then((slots: AvailabilitySlot[]) => {
+        if (slots && slots.length > 0) {
+          const activeDays = new Set(slots.filter((s) => s.isActive !== false).map((s) => s.dayOfWeek));
+          setEnabledDays(activeDays);
+          const merged = DEFAULT_AVAILABILITY.map((def) => {
+            const existing = slots.find((s) => s.dayOfWeek === def.dayOfWeek);
+            return existing
+              ? { ...def, startTime: existing.startTime, endTime: existing.endTime, bufferMins: existing.bufferMins ?? 15 }
+              : def;
+          });
+          setAvailability(merged);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   async function addService() {
@@ -69,6 +107,48 @@ export default function BookingPage() {
     });
     setBookings(bookings.map((b) => (b.id === id ? { ...b, status: "CANCELLED" } : b)));
     toast.success("Booking cancelled");
+  }
+
+  function toggleDay(day: number) {
+    setEnabledDays((prev) => {
+      const next = new Set(prev);
+      if (next.has(day)) next.delete(day);
+      else next.add(day);
+      return next;
+    });
+  }
+
+  function updateSlot(day: number, field: "startTime" | "endTime" | "bufferMins", value: string | number) {
+    setAvailability((prev) =>
+      prev.map((s) => (s.dayOfWeek === day ? { ...s, [field]: value } : s))
+    );
+  }
+
+  async function saveAvailability() {
+    setSavingAvailability(true);
+    try {
+      const slots = availability
+        .filter((s) => enabledDays.has(s.dayOfWeek))
+        .map(({ dayOfWeek, startTime, endTime, bufferMins }) => ({
+          dayOfWeek,
+          startTime,
+          endTime,
+          bufferMins,
+        }));
+      const res = await fetch("/api/availability", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slots }),
+      });
+      if (res.ok) {
+        toast.success("Availability saved");
+      } else {
+        toast.error("Failed to save availability");
+      }
+    } catch {
+      toast.error("Failed to save availability");
+    }
+    setSavingAvailability(false);
   }
 
   const upcomingBookings = bookings.filter(
@@ -147,6 +227,81 @@ export default function BookingPage() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Availability */}
+      <div className="bg-white rounded-xl border p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-semibold text-gray-900">Availability</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Set your working hours for each day of the week</p>
+          </div>
+          <Button size="sm" onClick={saveAvailability} loading={savingAvailability}>
+            Save availability
+          </Button>
+        </div>
+
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5, 6, 0].map((day) => {
+            const slot = availability.find((s) => s.dayOfWeek === day)!;
+            const enabled = enabledDays.has(day);
+            return (
+              <div
+                key={day}
+                className={`flex items-center gap-3 p-3 rounded-lg ${enabled ? "bg-gray-50" : "bg-gray-50/50"}`}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleDay(day)}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors ${
+                    enabled ? "bg-indigo-600" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                      enabled ? "translate-x-4.5" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+
+                <span className={`w-24 text-sm font-medium ${enabled ? "text-gray-900" : "text-gray-400"}`}>
+                  {DAY_LABELS[day]}
+                </span>
+
+                {enabled ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="time"
+                      value={slot.startTime}
+                      onChange={(e) => updateSlot(day, "startTime", e.target.value)}
+                      className="text-sm border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <span className="text-xs text-gray-400">to</span>
+                    <input
+                      type="time"
+                      value={slot.endTime}
+                      onChange={(e) => updateSlot(day, "endTime", e.target.value)}
+                      className="text-sm border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <div className="flex items-center gap-1 ml-auto">
+                      <input
+                        type="number"
+                        min={0}
+                        max={120}
+                        value={slot.bufferMins}
+                        onChange={(e) => updateSlot(day, "bufferMins", parseInt(e.target.value) || 0)}
+                        className="w-16 text-sm border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-900 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                      <span className="text-xs text-gray-400 whitespace-nowrap">min buffer</span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-sm text-gray-400">Unavailable</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Upcoming bookings */}
