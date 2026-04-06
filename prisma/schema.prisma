@@ -14,7 +14,7 @@ model User {
   emailVerified       DateTime?
   passwordHash        String?
   name                String?
-  username            String    @unique
+  username            String    @unique @default(cuid())
   bio                 String?
   avatarUrl           String?
   plan                String    @default("FREE")

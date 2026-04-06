@@ -93,10 +93,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        const existingUser = await prisma.user.findUnique({
+        // After adapter creates the user, update with a readable username if still a cuid
+        const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
         });
-        if (!existingUser) {
+        if (dbUser && dbUser.username.length > 20) {
+          // Username is still a cuid default — generate a readable one
           const baseUsername = user.email!.split("@")[0].toLowerCase().replace(/[^a-z0-9-]/g, "");
           let username = baseUsername;
           let counter = 1;
@@ -104,14 +106,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             username = `${baseUsername}${counter}`;
             counter++;
           }
-          await prisma.user.create({
-            data: {
-              email: user.email!,
-              name: user.name,
-              username,
-              avatarUrl: user.image,
-              emailVerified: new Date(),
-            },
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: { username, avatarUrl: user.image },
           });
         }
       }
