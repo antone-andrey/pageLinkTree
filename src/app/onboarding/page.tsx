@@ -177,7 +177,7 @@ export default function OnboardingPage() {
           {step === 0 && (
             <div className="bg-white rounded-xl shadow-sm border p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Choose your username</h2>
-              <p className="text-gray-500 mb-6">This will be your page URL: pagedrop.com/{username || "..."}</p>
+              <p className="text-gray-500 mb-6">This will be your page URL: page-drop.com/{username || "..."}</p>
 
               <Input
                 id="username"
@@ -327,7 +327,7 @@ export default function OnboardingPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Your page is ready!</h2>
               <p className="text-gray-500 mb-4">
                 Your page will be live at{" "}
-                <span className="font-mono text-indigo-600">pagedrop.com/{username}</span>
+                <span className="font-mono text-indigo-600">page-drop.com/{username}</span>
               </p>
 
               <div className="bg-gray-50 rounded-xl p-6 mb-6 text-left">
@@ -365,7 +365,11 @@ export default function OnboardingPage() {
                   Skip
                 </Button>
               )}
-              <Button onClick={handleNext} loading={loading}>
+              <Button
+                onClick={handleNext}
+                loading={loading}
+                disabled={step === 0 && !usernameAvailable && username !== session?.user?.username}
+              >
                 {step === 4 ? "Publish & go to dashboard" : "Continue"}
               </Button>
             </div>
