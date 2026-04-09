@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PricingSection from "@/components/pricing-section";
+import { Logo } from "@/components/ui/logo";
 
 /* ═══════════════════════════════════════════════════════
    PageDrop — Premium Landing Page
@@ -174,12 +175,7 @@ export default function LandingPage() {
         <nav className="relative z-20 border-b border-white/[0.04]" aria-label="Main navigation">
           <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <span className="text-lg font-bold tracking-tight">PageDrop</span>
+              <Logo variant="full" theme="dark" size="md" />
             </Link>
 
             <div className="hidden sm:flex items-center gap-8">
@@ -499,12 +495,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="col-span-2">
                 <Link href="/" className="flex items-center gap-2.5 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-lg font-bold tracking-tight">PageDrop</span>
+                  <Logo variant="full" theme="dark" size="md" />
                 </Link>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
                   The all-in-one link-in-bio platform with booking and payments for creators, freelancers, and small businesses.

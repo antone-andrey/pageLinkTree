@@ -310,7 +310,7 @@ export default function PageBuilderPage() {
         </div>
 
         {/* Profile section */}
-        <div className="bg-white rounded-xl border p-6">
+        <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Profile</h3>
           <div className="space-y-4">
             {/* Avatar upload */}
@@ -327,10 +327,7 @@ export default function PageBuilderPage() {
                     className="rounded-full object-cover ring-2 ring-gray-100"
                   />
                 ) : (
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold"
-                    style={{ backgroundColor: theme.accent + "20", color: theme.accent }}
-                  >
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-xl font-bold text-white">
                     {userData.name?.[0]?.toUpperCase() || "?"}
                   </div>
                 )}
@@ -382,10 +379,10 @@ export default function PageBuilderPage() {
         </div>
 
         {/* Links section */}
-        <div className="bg-white rounded-xl border p-6">
+        <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-900">Links</h3>
-            <Button size="sm" onClick={() => setShowAddLink(true)}>Add link</Button>
+            <Button size="sm" variant="gradient" onClick={() => setShowAddLink(true)}>Add link</Button>
           </div>
 
           {showAddLink && (
@@ -407,20 +404,27 @@ export default function PageBuilderPage() {
         </div>
 
         {/* Theme picker */}
-        <div className="bg-white rounded-xl border p-6">
+        <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Theme</h3>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2.5">
             {themeList.map((t) => (
               <button
                 key={t.id}
                 onClick={() => updateTheme(t.id)}
-                className={`p-2.5 rounded-lg border-2 transition-all ${
+                className={`relative p-2.5 rounded-lg border-2 transition-all ${
                   pageData.themeId === t.id
-                    ? "border-indigo-600 ring-1 ring-indigo-200"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "border-indigo-600 ring-2 ring-indigo-200 shadow-md"
+                    : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                 }`}
               >
-                <div className="w-full h-10 rounded-md mb-1.5" style={{ background: t.preview }} />
+                <div className="w-full h-12 rounded-md mb-1.5" style={{ background: t.preview }} />
+                {pageData.themeId === t.id && (
+                  <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
                 <span className="text-[11px] text-gray-600 font-medium">{t.name}</span>
               </button>
             ))}
@@ -498,11 +502,11 @@ export default function PageBuilderPage() {
         </div>
 
         {/* ── PageDrop Footer toggle (Linktree-style) ─────────── */}
-        <div className="bg-white rounded-xl border overflow-hidden">
+        <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
           <div className="p-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               {/* Lightning icon */}
-              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center flex-shrink-0">
                 <svg className="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                 </svg>
@@ -568,8 +572,8 @@ export default function PageBuilderPage() {
           </div>
 
           <div className={`mx-auto ${mobilePreview ? "max-w-[375px]" : "max-w-full"}`}>
-            <div className="bg-gray-200 rounded-2xl p-2 shadow-inner">
-              <div className="rounded-xl overflow-hidden">
+            <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-[2rem] p-3 shadow-xl">
+              <div className="rounded-[1.25rem] overflow-hidden">
                 <ProfilePreview
                   user={userData}
                   links={links}
@@ -587,7 +591,7 @@ export default function PageBuilderPage() {
       {showBrandingModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowBrandingModal(false)} />
-          <div className="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
+          <div className="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4 animate-scale-in">
             <div className="text-center">
               <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <svg className="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">

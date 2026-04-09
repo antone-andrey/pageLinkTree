@@ -93,19 +93,29 @@ export default function PaymentsPage() {
       </div>
 
       {/* Stripe Connect */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <h3 className="font-semibold text-gray-900 mb-4">Stripe Connect</h3>
         {user?.stripeConnectActive ? (
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full" />
-            <span className="text-sm text-green-700">Stripe connected</span>
+          <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+            <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-emerald-800">Stripe connected</p>
+              <p className="text-xs text-emerald-600">You can receive payments from visitors</p>
+            </div>
           </div>
         ) : (
           <div>
             <p className="text-sm text-gray-500 mb-4">
               Connect your Stripe account to receive payments directly from visitors.
             </p>
-            <Button onClick={connectStripe}>Connect Stripe</Button>
+            <Button variant="gradient" onClick={connectStripe}>
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>
+              Connect Stripe
+            </Button>
           </div>
         )}
 
@@ -117,7 +127,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Payment Button Config */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-900">Payment Button</h3>
           {buttonLoaded && (
@@ -185,7 +195,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Recent Transactions */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <h3 className="font-semibold text-gray-900 mb-4">
           Recent Transactions
           {transactions.length > 0 && (
@@ -204,7 +214,7 @@ export default function PaymentsPage() {
         ) : (
           <div className="divide-y">
             {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between py-3">
+              <div key={tx.id} className="flex items-center justify-between py-3 hover:bg-gray-50/50 -mx-2 px-2 rounded-lg transition-colors">
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {tx.description || "Payment"}
@@ -220,7 +230,7 @@ export default function PaymentsPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-gray-900 font-mono">
                     {formatAmount(tx.amount, tx.currency)}
                   </p>
                   {tx.fee > 0 && (
@@ -228,8 +238,8 @@ export default function PaymentsPage() {
                       Fee: {formatAmount(tx.fee, tx.currency)}
                     </p>
                   )}
-                  <span className={`text-xs font-medium ${
-                    tx.status === "completed" ? "text-green-600" : "text-amber-600"
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                    tx.status === "completed" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
                   }`}>
                     {tx.status}
                   </span>

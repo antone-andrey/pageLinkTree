@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { usernameSchema } from "@/lib/validations";
+import { auth } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const username = req.nextUrl.searchParams.get("username");
@@ -14,6 +15,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ available: false, error: "Invalid username format" });
   }
 
+  const session = await auth();
   const existing = await prisma.user.findUnique({ where: { username } });
-  return NextResponse.json({ available: !existing });
+
+  // If the found user is the current user, the username is still "available" to them
+  const isSelf = existing && session?.user?.id && existing.id === session.user.id;
+  return NextResponse.json({ available: !existing || isSelf });
 }
