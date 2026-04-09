@@ -62,8 +62,13 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ checkoutUrl: checkoutSession.url });
-  } catch (error) {
-    console.error("Subscription checkout error:", error);
-    return NextResponse.json({ error: "Failed to create checkout" }, { status: 500 });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const errType = error instanceof Error ? error.constructor.name : typeof error;
+    console.error("Subscription checkout error:", errType, errMsg);
+    console.error("STRIPE_SECRET_KEY set:", !!process.env.STRIPE_SECRET_KEY);
+    console.error("STRIPE_PRO_PRICE_ID:", process.env.STRIPE_PRO_PRICE_ID);
+    console.error("STRIPE_BUSINESS_PRICE_ID:", process.env.STRIPE_BUSINESS_PRICE_ID);
+    return NextResponse.json({ error: `Failed to create checkout: ${errMsg}` }, { status: 500 });
   }
 }
