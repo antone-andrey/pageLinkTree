@@ -163,10 +163,10 @@ export default function BookingPage() {
       </div>
 
       {/* Services */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-900">Services</h3>
-          <Button size="sm" onClick={() => setShowAddService(true)}>
+          <Button size="sm" variant="gradient" onClick={() => setShowAddService(true)}>
             Add service
           </Button>
         </div>
@@ -212,7 +212,7 @@ export default function BookingPage() {
         ) : (
           <div className="space-y-2">
             {services.map((service) => (
-              <div key={service.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={service.id} className={`flex items-center justify-between p-3.5 rounded-lg border-l-3 card-lift transition-all ${service.isActive ? "bg-white border border-gray-100 border-l-indigo-500 shadow-sm" : "bg-gray-50 border border-gray-100 border-l-gray-300"}`}>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{service.name}</p>
                   <p className="text-xs text-gray-500">
@@ -220,7 +220,7 @@ export default function BookingPage() {
                     {service.price === 0 ? "Free" : formatCurrency(service.price, service.currency)}
                   </p>
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${service.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${service.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
                   {service.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
@@ -230,7 +230,7 @@ export default function BookingPage() {
       </div>
 
       {/* Availability */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-semibold text-gray-900">Availability</h3>
@@ -248,7 +248,7 @@ export default function BookingPage() {
             return (
               <div
                 key={day}
-                className={`flex items-center gap-3 p-3 rounded-lg ${enabled ? "bg-gray-50" : "bg-gray-50/50"}`}
+                className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${enabled ? "bg-indigo-50/40" : "bg-gray-50/50"}`}
               >
                 <button
                   type="button"
@@ -305,14 +305,14 @@ export default function BookingPage() {
       </div>
 
       {/* Upcoming bookings */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <h3 className="font-semibold text-gray-900 mb-4">Upcoming bookings</h3>
         {upcomingBookings.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-8">No upcoming bookings</p>
         ) : (
           <div className="space-y-2">
             {upcomingBookings.map((booking) => (
-              <div key={booking.id} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
+              <div key={booking.id} className="p-3.5 bg-white rounded-lg border border-gray-100 border-l-3 border-l-indigo-500 shadow-sm flex items-center justify-between card-lift">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{booking.guestName}</p>
                   <p className="text-xs text-gray-500">

@@ -44,8 +44,8 @@ function SortableLink({ link, onDelete }: { link: Link; onDelete: (id: string) =
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-gray-50 rounded-lg p-3 flex items-center gap-3">
-      <button {...attributes} {...listeners} className="cursor-grab text-gray-400 hover:text-gray-600">
+    <div ref={setNodeRef} style={style} className="bg-gray-50 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-100/70 transition-all duration-200 border-l-2 border-transparent hover:border-indigo-400">
+      <button {...attributes} {...listeners} className="cursor-grab text-gray-300 hover:text-indigo-400 transition-colors">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
         </svg>
@@ -56,7 +56,7 @@ function SortableLink({ link, onDelete }: { link: Link; onDelete: (id: string) =
         <p className="text-xs text-gray-400 truncate">{link.url}</p>
       </div>
 
-      <span className="text-xs text-gray-400">{link.clicks} clicks</span>
+      <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">{link.clicks} clicks</span>
 
       {showConfirm ? (
         <div className="flex items-center gap-1">

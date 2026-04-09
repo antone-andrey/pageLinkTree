@@ -162,7 +162,7 @@ function SettingsContent() {
       </div>
 
       {/* Profile settings */}
-      <div className="bg-white rounded-xl border p-6 space-y-4">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6 space-y-4">
         <h3 className="font-semibold text-gray-900">Profile</h3>
         <Input label="Display name" value={name} onChange={(e) => setName(e.target.value)} />
         <Input label="Username" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} />
@@ -180,7 +180,7 @@ function SettingsContent() {
       </div>
 
       {/* Plan & Billing */}
-      <div className="bg-white rounded-xl border p-6">
+      <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="font-semibold text-gray-900">Plan & Billing</h3>
@@ -241,8 +241,8 @@ function SettingsContent() {
                 key={plan.key}
                 className={`relative rounded-xl border-2 p-5 transition-all ${
                   isCurrent
-                    ? "border-indigo-500 bg-indigo-50/50 shadow-md"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "gradient-border border-transparent bg-white shadow-md"
+                    : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                 }`}
               >
                 {plan.popular && (
@@ -253,7 +253,7 @@ function SettingsContent() {
 
                 <h4 className="font-bold text-gray-900">{plan.name}</h4>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-2xl font-extrabold text-gray-900">
+                  <span className={`text-2xl font-extrabold ${plan.monthlyPrice > 0 ? "text-gradient-brand" : "text-gray-900"}`}>
                     ${billingPeriod === "annual" ? plan.annualPrice : plan.monthlyPrice}
                   </span>
                   <span className="text-sm text-gray-500">{plan.period}</span>
@@ -284,7 +284,7 @@ function SettingsContent() {
                     <button
                       onClick={() => handleUpgrade(plan.key)}
                       disabled={upgrading !== null}
-                      className="w-full py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-indigo-500 to-violet-600 text-white hover:from-indigo-600 hover:to-violet-700 shadow-md shadow-indigo-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {upgrading === plan.key ? (
                         <span className="flex items-center justify-center gap-2">
@@ -314,7 +314,8 @@ function SettingsContent() {
       </div>
 
       {/* Danger zone */}
-      <div className="bg-white rounded-xl border border-red-200 p-6">
+      <div className="bg-white rounded-xl border border-red-200 p-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-red-500 to-red-300" />
         <h3 className="font-semibold text-red-600 mb-2">Danger Zone</h3>
         {!showDeleteConfirm ? (
           <Button variant="danger" size="sm" onClick={() => setShowDeleteConfirm(true)}>
