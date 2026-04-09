@@ -9,6 +9,13 @@ function getStripe() {
   });
 }
 
+const PRICE_MAP: Record<string, string | undefined> = {
+  PRO_MONTHLY: process.env.STRIPE_PRO_MONTHLY_PRICE_ID,
+  PRO_ANNUAL: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
+  BUSINESS_MONTHLY: process.env.STRIPE_BUSINESS_MONTHLY_PRICE_ID,
+  BUSINESS_ANNUAL: process.env.STRIPE_BUSINESS_ANNUAL_PRICE_ID,
+};
+
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -16,17 +23,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { plan } = await req.json();
+    const { plan, billing = "monthly" } = await req.json();
     const s = getStripe();
 
-    const priceId = plan === "PRO"
-      ? process.env.STRIPE_PRO_PRICE_ID
-      : plan === "BUSINESS"
-        ? process.env.STRIPE_BUSINESS_PRICE_ID
-        : null;
+    if (!["PRO", "BUSINESS"].includes(plan) || !["monthly", "annual"].includes(billing)) {
+      return NextResponse.json({ error: "Invalid plan or billing period" }, { status: 400 });
+    }
+
+    const key = `${plan}_${billing.toUpperCase()}`;
+    const priceId = PRICE_MAP[key];
 
     if (!priceId) {
-      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+      return NextResponse.json({ error: `Price not configured for ${plan} ${billing}` }, { status: 400 });
     }
 
     // Get or create Stripe customer
@@ -64,11 +72,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ checkoutUrl: checkoutSession.url });
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : String(error);
-    const errType = error instanceof Error ? error.constructor.name : typeof error;
-    console.error("Subscription checkout error:", errType, errMsg);
-    console.error("STRIPE_SECRET_KEY set:", !!process.env.STRIPE_SECRET_KEY);
-    console.error("STRIPE_PRO_PRICE_ID:", process.env.STRIPE_PRO_PRICE_ID);
-    console.error("STRIPE_BUSINESS_PRICE_ID:", process.env.STRIPE_BUSINESS_PRICE_ID);
+    console.error("Subscription checkout error:", errMsg);
     return NextResponse.json({ error: `Failed to create checkout: ${errMsg}` }, { status: 500 });
   }
 }

@@ -12,14 +12,16 @@ const PLANS = [
   {
     key: "FREE",
     name: "Free",
-    price: "$0",
+    monthlyPrice: 0,
+    annualPrice: 0,
     period: "forever",
     features: ["1 page", "10 links", "Booking", "1 payment button", "3% platform fee"],
   },
   {
     key: "PRO",
     name: "Pro",
-    price: "$7",
+    monthlyPrice: 7,
+    annualPrice: 5,
     period: "/month",
     popular: true,
     features: [
@@ -35,7 +37,8 @@ const PLANS = [
   {
     key: "BUSINESS",
     name: "Business",
-    price: "$14",
+    monthlyPrice: 14,
+    annualPrice: 10,
     period: "/month",
     features: [
       "3 pages",
@@ -58,6 +61,7 @@ function SettingsContent() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState("FREE");
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
 
   useEffect(() => {
     fetch("/api/user")
@@ -89,7 +93,7 @@ function SettingsContent() {
       const res = await fetch("/api/payments/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, billing: billingPeriod }),
       });
       const data = await res.json();
       if (data.checkoutUrl) {
@@ -184,15 +188,46 @@ function SettingsContent() {
               Current plan: <span className="font-semibold text-indigo-600">{currentPlan}</span>
             </p>
           </div>
-          {currentPlan !== "FREE" && (
-            <button
-              onClick={handleManageBilling}
-              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-            >
-              Manage billing →
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {currentPlan !== "FREE" && (
+              <button
+                onClick={handleManageBilling}
+                className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+              >
+                Manage billing →
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Billing period toggle */}
+        {currentPlan === "FREE" && (
+          <div className="flex items-center justify-center gap-3 mb-6 p-2 bg-gray-50 rounded-lg">
+            <button
+              onClick={() => setBillingPeriod("monthly")}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                billingPeriod === "monthly"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod("annual")}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
+                billingPeriod === "annual"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Annual
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+                SAVE 30%
+              </span>
+            </button>
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-3 gap-4">
           {PLANS.map((plan) => {
@@ -218,9 +253,16 @@ function SettingsContent() {
 
                 <h4 className="font-bold text-gray-900">{plan.name}</h4>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-2xl font-extrabold text-gray-900">{plan.price}</span>
+                  <span className="text-2xl font-extrabold text-gray-900">
+                    ${billingPeriod === "annual" ? plan.annualPrice : plan.monthlyPrice}
+                  </span>
                   <span className="text-sm text-gray-500">{plan.period}</span>
                 </div>
+                {billingPeriod === "annual" && plan.monthlyPrice > 0 && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Billed ${plan.annualPrice * 12}/year
+                  </p>
+                )}
 
                 <ul className="mt-4 space-y-2">
                   {plan.features.map((f) => (

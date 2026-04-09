@@ -91,9 +91,11 @@ export async function POST(req: NextRequest) {
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
         const priceId = subscription.items.data[0]?.price.id;
+        const proPrices = [process.env.STRIPE_PRO_MONTHLY_PRICE_ID, process.env.STRIPE_PRO_ANNUAL_PRICE_ID].filter(Boolean);
+        const bizPrices = [process.env.STRIPE_BUSINESS_MONTHLY_PRICE_ID, process.env.STRIPE_BUSINESS_ANNUAL_PRICE_ID].filter(Boolean);
         let plan: "FREE" | "PRO" | "BUSINESS" = "FREE";
-        if (priceId === process.env.STRIPE_PRO_PRICE_ID) plan = "PRO";
-        if (priceId === process.env.STRIPE_BUSINESS_PRICE_ID) plan = "BUSINESS";
+        if (proPrices.includes(priceId)) plan = "PRO";
+        if (bizPrices.includes(priceId)) plan = "BUSINESS";
 
         if (subscription.metadata?.userId) {
           await prisma.user.update({
