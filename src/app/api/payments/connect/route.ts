@@ -46,8 +46,9 @@ export async function GET() {
     });
 
     return NextResponse.json({ url: accountLink.url });
-  } catch (error) {
-    console.error("Stripe connect error:", error);
-    return NextResponse.json({ error: "Failed to create Stripe link" }, { status: 500 });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error("Stripe connect error:", errMsg);
+    return NextResponse.json({ error: `Failed to create Stripe link: ${errMsg}` }, { status: 500 });
   }
 }
