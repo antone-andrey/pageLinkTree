@@ -74,7 +74,7 @@ export default async function UserProfilePage({ params }: Props) {
         bio: true,
         avatarUrl: true,
         plan: true,
-        page: { select: { themeId: true, isPublished: true, showBranding: true, customBgUrl: true } },
+        page: { select: { themeId: true, isPublished: true, showBranding: true, customBgUrl: true, payButtonLabel: true, payButtonAmount: true, payButtonActive: true } },
         links: {
           where: { isActive: true },
           orderBy: { position: "asc" },
@@ -112,6 +112,11 @@ export default async function UserProfilePage({ params }: Props) {
       showBranding={user.page.showBranding}
       customBgUrl={user.page.customBgUrl || undefined}
       isOwner={isOwner}
+      payButton={
+        user.page.payButtonActive && user.page.payButtonLabel && user.page.payButtonAmount
+          ? { label: user.page.payButtonLabel, amount: user.page.payButtonAmount }
+          : undefined
+      }
     />
   );
 }

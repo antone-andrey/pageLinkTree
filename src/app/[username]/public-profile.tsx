@@ -29,9 +29,10 @@ interface PublicProfileProps {
   showBranding?: boolean;
   customBgUrl?: string;
   isOwner?: boolean;
+  payButton?: { label: string; amount: number };
 }
 
-export function PublicProfile({ user, links, services, theme, showBranding = true, customBgUrl, isOwner = false }: PublicProfileProps) {
+export function PublicProfile({ user, links, services, theme, showBranding = true, customBgUrl, isOwner = false, payButton }: PublicProfileProps) {
   useEffect(() => {
     fetch("/api/analytics/pageview", {
       method: "POST",
@@ -270,6 +271,50 @@ export function PublicProfile({ user, links, services, theme, showBranding = tru
                 </a>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Payment Button */}
+        {payButton && (
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <button
+              onClick={async () => {
+                const res = await fetch("/api/payments/checkout", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    userId: user.id,
+                    label: payButton.label,
+                    amount: payButton.amount,
+                    currency: "usd",
+                  }),
+                });
+                const data = await res.json();
+                if (data.checkoutUrl) {
+                  window.location.href = data.checkoutUrl;
+                }
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "12px 28px",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "#fff",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                border: "none",
+                borderRadius: 12,
+                cursor: "pointer",
+                transition: "transform 0.15s ease, box-shadow 0.15s ease",
+                boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
+              }}
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {payButton.label} — {formatCurrency(payButton.amount, "usd")}
+            </button>
           </div>
         )}
 

@@ -42,6 +42,9 @@ export const pageSchema = z.object({
   customBgUrl: z.string().nullable().optional(),
   metaTitle: z.string().max(60).optional(),
   metaDesc: z.string().max(160).optional(),
+  payButtonLabel: z.string().max(50).nullable().optional(),
+  payButtonAmount: z.number().int().min(50).max(99999).nullable().optional(),
+  payButtonActive: z.boolean().optional(),
 });
 
 export const serviceSchema = z.object({

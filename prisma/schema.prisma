@@ -72,18 +72,21 @@ model VerificationToken {
 }
 
 model Page {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  themeId      String   @default("default")
-  isPublished  Boolean  @default(false)
-  showBranding Boolean  @default(true)
-  customBgUrl  String?
-  customDomain String?
-  metaTitle    String?
-  metaDesc     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  themeId         String   @default("default")
+  isPublished     Boolean  @default(false)
+  showBranding    Boolean  @default(true)
+  customBgUrl     String?
+  customDomain    String?
+  metaTitle       String?
+  metaDesc        String?
+  payButtonLabel  String?
+  payButtonAmount Int?
+  payButtonActive Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Link {
