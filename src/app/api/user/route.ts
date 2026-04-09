@@ -84,3 +84,30 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function DELETE() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    // Delete all related data first, then the user
+    await prisma.$transaction([
+      prisma.booking.deleteMany({ where: { userId: session.user.id } }),
+      prisma.service.deleteMany({ where: { userId: session.user.id } }),
+      prisma.link.deleteMany({ where: { userId: session.user.id } }),
+      prisma.availability.deleteMany({ where: { userId: session.user.id } }),
+      prisma.transaction.deleteMany({ where: { userId: session.user.id } }),
+      prisma.page.deleteMany({ where: { userId: session.user.id } }),
+      prisma.account.deleteMany({ where: { userId: session.user.id } }),
+      prisma.session.deleteMany({ where: { userId: session.user.id } }),
+      prisma.user.delete({ where: { id: session.user.id } }),
+    ]);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Delete account error:", error);
+    return NextResponse.json({ error: "Failed to delete account" }, { status: 500 });
+  }
+}
