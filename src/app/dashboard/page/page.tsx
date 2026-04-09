@@ -196,15 +196,16 @@ export default function PageBuilderPage() {
 
   async function purchaseBrandingRemoval() {
     setPurchasingBranding(true);
-    const res = await fetch("/api/page/remove-branding", { method: "POST" });
-    if (res.ok) {
-      setUserData((prev) => ({ ...prev, brandingRemoved: true }));
-      setPageData((prev) => ({ ...prev, showBranding: false }));
-      setShowBrandingModal(false);
-      toast.success("Branding removed! Footer is now hidden.");
-    } else {
+    try {
+      const res = await fetch("/api/page/remove-branding", { method: "POST" });
       const data = await res.json();
-      toast.error(data.error || "Payment failed");
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        toast.error(data.error || "Failed to start checkout");
+      }
+    } catch {
+      toast.error("Something went wrong");
     }
     setPurchasingBranding(false);
   }
@@ -630,7 +631,7 @@ export default function PageBuilderPage() {
                       No branding + custom backgrounds + more
                     </p>
                   </div>
-                  <span className="text-sm font-bold text-purple-600">$12/mo</span>
+                  <span className="text-sm font-bold text-purple-600">$7/mo</span>
                 </div>
               </button>
             </div>
