@@ -85,6 +85,7 @@ model Page {
   payButtonLabel  String?
   payButtonAmount Int?
   payButtonActive Boolean  @default(false)
+  socialLinks     String?  // JSON string: { instagram?: string, tiktok?: string, ... }
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

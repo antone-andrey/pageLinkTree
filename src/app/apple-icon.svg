@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="10%" y1="0%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="40%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="#0a0a12"/>
+  <!-- Outer glow -->
+  <path d="M90 20C90 20 38 76 38 110C38 138.7 61 161 90 161C119 161 142 138.7 142 110C142 76 90 20 90 20Z" fill="url(#ring)" opacity="0.5"/>
+  <!-- Main drop -->
+  <path d="M90 30C90 30 48 80 48 108C48 131.2 65.8 150 90 150C114.2 150 132 131.2 132 108C132 80 90 30 90 30Z" fill="url(#bg)"/>
+  <!-- PD letters -->
+  <text x="90" y="120" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="#1a1a2e" opacity="0.7">PD</text>
+</svg>

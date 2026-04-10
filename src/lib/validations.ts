@@ -45,6 +45,7 @@ export const pageSchema = z.object({
   payButtonLabel: z.string().max(50).nullable().optional(),
   payButtonAmount: z.number().int().min(50).max(99999).nullable().optional(),
   payButtonActive: z.boolean().optional(),
+  socialLinks: z.string().nullable().optional(),
 });
 
 export const serviceSchema = z.object({
