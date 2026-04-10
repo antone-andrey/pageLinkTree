@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { linkSchema } from "@/lib/validations";
 import { rateLimit } from "@/lib/rate-limit";
 import { isValidUrl, sanitizeString, sanitizeUrl } from "@/lib/validation";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 const limiter = rateLimit({ interval: 60_000, uniqueTokenPerInterval: 500 });
 
@@ -58,11 +59,12 @@ export async function POST(req: NextRequest) {
       select: { plan: true },
     });
 
-    if (user?.plan === "FREE") {
+    const limits = getPlanLimits(user?.plan || "FREE");
+    if (limits.links !== Infinity) {
       const count = await prisma.link.count({ where: { userId: session.user.id } });
-      if (count >= 5) {
+      if (count >= limits.links) {
         return NextResponse.json(
-          { error: "Free plan limited to 5 links. Upgrade to add more." },
+          { error: `Free plan limited to ${limits.links} links. Upgrade to add more.` },
           { status: 403 }
         );
       }

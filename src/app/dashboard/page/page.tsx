@@ -9,6 +9,7 @@ import { themes, themeList } from "@/lib/themes";
 import { LinkEditor } from "@/components/dashboard/link-editor";
 import { ProfilePreview } from "@/components/public/profile-preview";
 import toast from "react-hot-toast";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 interface Link {
   id: string;
@@ -82,6 +83,8 @@ export default function PageBuilderPage() {
 
   const isPro = userData.plan === "PRO" || userData.plan === "BUSINESS";
   const canHideBranding = isPro || userData.brandingRemoved;
+  const limits = getPlanLimits(userData.plan || "FREE");
+  const filledSocialCount = Object.values(pageData.socialLinks).filter((v) => v && v.trim()).length;
 
   const fetchData = useCallback(async () => {
     const [linksRes, pageRes, userRes, servicesRes] = await Promise.all([
@@ -431,8 +434,19 @@ export default function PageBuilderPage() {
         {/* Links section */}
         <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-gray-900">Links</h3>
-            <Button size="sm" variant="gradient" onClick={() => setShowAddLink(true)}>Add link</Button>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Links
+              {limits.links !== Infinity && (
+                <span className="ml-2 text-xs font-normal text-gray-400">{links.length}/{limits.links}</span>
+              )}
+            </h3>
+            {limits.links !== Infinity && links.length >= limits.links ? (
+              <Button size="sm" variant="secondary" onClick={() => toast("Upgrade to Pro for unlimited links", { icon: "✨" })}>
+                Upgrade
+              </Button>
+            ) : (
+              <Button size="sm" variant="gradient" onClick={() => setShowAddLink(true)}>Add link</Button>
+            )}
           </div>
 
           {showAddLink && (
@@ -456,31 +470,42 @@ export default function PageBuilderPage() {
         {/* Social Links */}
         <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-gray-900">Social Links</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Social Links
+              {limits.socialLinks !== Infinity && (
+                <span className="ml-2 text-xs font-normal text-gray-400">{filledSocialCount}/{limits.socialLinks}</span>
+              )}
+            </h3>
             <Button size="sm" onClick={saveSocialLinks} loading={savingSocial}>Save</Button>
           </div>
           <div className="space-y-3">
-            {SOCIAL_PLATFORMS.map((platform) => (
-              <div key={platform.key} className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d={platform.icon} />
-                  </svg>
+            {SOCIAL_PLATFORMS.map((platform) => {
+              const currentValue = pageData.socialLinks[platform.key as keyof SocialLinks] || "";
+              const isFilledSlot = currentValue.trim().length > 0;
+              const atLimit = limits.socialLinks !== Infinity && filledSocialCount >= limits.socialLinks && !isFilledSlot;
+              return (
+                <div key={platform.key} className={`flex items-center gap-3 ${atLimit ? "opacity-50" : ""}`}>
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d={platform.icon} />
+                    </svg>
+                  </div>
+                  <input
+                    type="url"
+                    placeholder={atLimit ? "Upgrade to Pro for more social links" : platform.placeholder}
+                    disabled={atLimit}
+                    value={currentValue}
+                    onChange={(e) =>
+                      setPageData((prev) => ({
+                        ...prev,
+                        socialLinks: { ...prev.socialLinks, [platform.key]: e.target.value },
+                      }))
+                    }
+                    className="flex-1 px-3 py-2 bg-gray-50/50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 focus:bg-white transition-all disabled:cursor-not-allowed disabled:bg-gray-100"
+                  />
                 </div>
-                <input
-                  type="url"
-                  placeholder={platform.placeholder}
-                  value={pageData.socialLinks[platform.key as keyof SocialLinks] || ""}
-                  onChange={(e) =>
-                    setPageData((prev) => ({
-                      ...prev,
-                      socialLinks: { ...prev.socialLinks, [platform.key]: e.target.value },
-                    }))
-                  }
-                  className="flex-1 px-3 py-2 bg-gray-50/50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 focus:bg-white transition-all"
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

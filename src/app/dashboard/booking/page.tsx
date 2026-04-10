@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 interface Service {
   id: string;
@@ -60,10 +61,12 @@ export default function BookingPage() {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>(DEFAULT_AVAILABILITY);
   const [enabledDays, setEnabledDays] = useState<Set<number>>(new Set([1, 2, 3, 4, 5]));
   const [savingAvailability, setSavingAvailability] = useState(false);
+  const [userPlan, setUserPlan] = useState("FREE");
 
   useEffect(() => {
     fetch("/api/services").then((r) => r.json()).then(setServices);
     fetch("/api/bookings").then((r) => r.json()).then(setBookings);
+    fetch("/api/user").then((r) => r.json()).then((u) => { if (u.plan) setUserPlan(u.plan); });
     fetch("/api/availability")
       .then((r) => r.json())
       .then((slots: AvailabilitySlot[]) => {
@@ -165,10 +168,21 @@ export default function BookingPage() {
       {/* Services */}
       <div className="bg-white rounded-xl border shadow-sm card-accent-top p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-900">Services</h3>
-          <Button size="sm" variant="gradient" onClick={() => setShowAddService(true)}>
-            Add service
-          </Button>
+          <h3 className="font-semibold text-gray-900">
+            Services
+            {getPlanLimits(userPlan).services !== Infinity && (
+              <span className="ml-2 text-xs font-normal text-gray-400">{services.length}/{getPlanLimits(userPlan).services}</span>
+            )}
+          </h3>
+          {getPlanLimits(userPlan).services !== Infinity && services.length >= getPlanLimits(userPlan).services ? (
+            <Button size="sm" variant="secondary" onClick={() => toast("Upgrade to Pro for unlimited services", { icon: "✨" })}>
+              Upgrade
+            </Button>
+          ) : (
+            <Button size="sm" variant="gradient" onClick={() => setShowAddService(true)}>
+              Add service
+            </Button>
+          )}
         </div>
 
         {showAddService && (

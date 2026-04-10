@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { serviceSchema } from "@/lib/validations";
 import { sanitizeString } from "@/lib/validation";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 export async function GET() {
   const session = await auth();
@@ -25,6 +26,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { plan: true },
+    });
+    const limits = getPlanLimits(user?.plan || "FREE");
+    if (limits.services !== Infinity) {
+      const count = await prisma.service.count({ where: { userId: session.user.id } });
+      if (count >= limits.services) {
+        return NextResponse.json(
+          { error: `Free plan limited to ${limits.services} service(s). Upgrade to add more.` },
+          { status: 403 }
+        );
+      }
+    }
+
     const body = await req.json();
     const data = serviceSchema.parse(body);
 
