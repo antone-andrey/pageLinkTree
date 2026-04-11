@@ -12,7 +12,7 @@ const plans = [
     foundingAnnualPrice: 0,
     period: "forever",
     desc: "Everything you need to get started.",
-    features: ["1 page", "10 links", "Booking", "1 payment button", "3% platform fee"],
+    features: ["1 page", "3 links", "3 social links", "1 booking service", "1 payment button", "3% platform fee"],
   },
   {
     name: "Pro",
@@ -26,8 +26,8 @@ const plans = [
     desc: "For creators who mean business.",
     popular: true,
     features: [
-      "Unlimited links",
-      "Booking + payments",
+      "Unlimited links & social links",
+      "Unlimited bookings & payments",
       "0% platform fee",
       "Custom backgrounds",
       "Remove branding",

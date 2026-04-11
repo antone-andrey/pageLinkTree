@@ -263,6 +263,22 @@ export default function PageBuilderPage() {
     toast.success("Link deleted");
   }
 
+  async function editLink(id: string, data: { title: string; url: string }) {
+    const res = await fetch(`/api/links/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setLinks(links.map((l) => (l.id === id ? { ...l, ...updated } : l)));
+      toast.success("Link updated");
+    } else {
+      const err = await res.json();
+      toast.error(err.error || "Failed to update link");
+    }
+  }
+
   async function handleReorder(reorderedLinks: Link[]) {
     setLinks(reorderedLinks);
     await fetch("/api/links/reorder", {
@@ -463,7 +479,7 @@ export default function PageBuilderPage() {
           {links.length === 0 && !showAddLink ? (
             <p className="text-sm text-gray-400 text-center py-8">Add your first link to get started</p>
           ) : (
-            <LinkEditor links={links} onReorder={handleReorder} onDelete={deleteLink} />
+            <LinkEditor links={links} onReorder={handleReorder} onDelete={deleteLink} onEdit={editLink} />
           )}
         </div>
 

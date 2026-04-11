@@ -93,6 +93,7 @@ const footerLinks = {
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
+    { label: "Cookie Policy", href: "/cookies" },
   ],
 };
 
@@ -154,9 +155,9 @@ export default function LandingPage() {
 
       {/* ═══ SR-only pricing data for crawlers ═══ */}
       <div className="sr-only">
-        PageDrop Pricing: Free plan $0 with 1 page, 10 links, booking, and 3% platform fee.
+        PageDrop Pricing: Free plan $0 with 1 page, 3 links, 3 social links, 1 booking service, 1 payment button, and 3% platform fee.
         Pro plan $7 per month founding member price (regular $12/month), or $5/month billed annually ($60/year).
-        Includes unlimited links, booking and payments, 0% platform fee, custom backgrounds, remove branding, advanced analytics, custom domain.
+        Includes unlimited links and social links, unlimited bookings and payments, 0% platform fee, custom backgrounds, remove branding, advanced analytics, custom domain.
         Business plan $14 per month founding member price (regular $24/month), or $10/month billed annually ($120/year).
         Includes everything in Pro plus priority support, team features, and API access.
       </div>

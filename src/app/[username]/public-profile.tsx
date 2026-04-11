@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Theme } from "@/lib/themes";
 import { formatCurrency } from "@/lib/utils";
@@ -31,6 +31,26 @@ const SOCIAL_ICONS: Record<string, { icon: string; color: string }> = {
   threads: { icon: "M16.556 12.346c-.07-.035-.144-.068-.217-.1a7.288 7.288 0 00-.246-.937c-.607-1.768-1.848-2.74-3.497-2.74-.05 0-.101.001-.152.003-1.06.036-1.908.496-2.397 1.263l1.122.764c.353-.528.917-.636 1.299-.649.028-.001.057-.001.085-.001.5 0 .878.187 1.123.556.178.268.295.64.351 1.109a7.992 7.992 0 00-1.59-.086c-2.093.12-3.443 1.356-3.38 3.093.032.871.446 1.62 1.166 2.11.607.413 1.39.612 2.205.56.996-.063 1.776-.438 2.32-1.117.413-.515.677-1.172.799-1.99.478.288.835.667 1.04 1.124.347.775.367 2.048-.658 3.073-.898.899-1.978 1.288-3.6 1.3-1.8-.014-3.162-.594-4.048-1.724-.82-1.047-1.243-2.549-1.258-4.464.015-1.915.439-3.417 1.258-4.464.886-1.13 2.248-1.71 4.048-1.724 1.815.015 3.199.598 4.11 1.733.44.548.775 1.236 1.002 2.049l1.332-.357a7.83 7.83 0 00-1.24-2.542c-1.174-1.465-2.884-2.212-5.084-2.233l-.12-.001c-2.187.021-3.876.775-5.02 2.235C7.454 7.5 6.94 9.295 6.922 11.5l-.001.083c.018 2.205.532 4 1.527 5.332 1.143 1.46 2.832 2.215 5.019 2.235l.12.001c1.944-.015 3.36-.55 4.586-1.735 1.587-1.587 1.535-3.582 1.018-4.737a4.24 4.24 0 00-2.635-2.333zm-2.604 3.859c-.835.052-1.704-.328-1.733-1.122-.021-.578.405-1.224 1.976-1.314.173-.01.343-.015.51-.015.435 0 .843.042 1.218.126-.139 1.823-1.034 2.272-1.971 2.325z", color: "#000000" },
 };
 
+// PageDrop drop icon (inline SVG path data for the logo mark)
+function PageDropMark({ size = 20, color = "#6366f1" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
+      <defs>
+        <linearGradient id="pd-mark" x1="10%" y1="0%" x2="90%" y2="100%">
+          <stop offset="0%" stopColor="#f472b6" />
+          <stop offset="40%" stopColor="#c084fc" />
+          <stop offset="100%" stopColor={color} />
+        </linearGradient>
+      </defs>
+      <path
+        d="M24 7C24 7 12 19 12 27C12 33.627 17.373 39 24 39C30.627 39 36 33.627 36 27C36 19 24 7 24 7Z"
+        fill="url(#pd-mark)"
+      />
+      <ellipse cx="19" cy="22" rx="3" ry="4" fill="white" opacity="0.15" transform="rotate(-20 19 22)" />
+    </svg>
+  );
+}
+
 interface PublicProfileProps {
   user: {
     id: string;
@@ -51,6 +71,9 @@ interface PublicProfileProps {
 }
 
 export function PublicProfile({ user, links, services, socialLinks, theme, showBranding = true, customBgUrl, isOwner = false, payButton }: PublicProfileProps) {
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     fetch("/api/analytics/pageview", {
       method: "POST",
@@ -61,6 +84,20 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
 
   function trackClick(linkId: string) {
     fetch(`/api/links/${linkId}/click`, { method: "POST" }).catch(() => {});
+  }
+
+  async function handleShare() {
+    const url = `${window.location.origin}/${user.username}`;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: `${user.name} — PageDrop`, url });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   }
 
   const pageStyle: React.CSSProperties = {
@@ -75,7 +112,24 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
     color: theme.page.color,
     fontFamily: theme.page.fontFamily,
     position: "relative",
+    display: "flex",
+    flexDirection: "column",
   };
+
+  const isDark = customBgUrl || (theme.page.background && (
+    theme.page.background.includes("#0") ||
+    theme.page.background.includes("#1") ||
+    theme.page.background.includes("#2") ||
+    theme.page.background.includes("rgb(0") ||
+    theme.page.background.includes("rgb(1") ||
+    theme.page.background.includes("linear-gradient")
+  ));
+
+  const subtleColor = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)";
+  const subtleHover = isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)";
+  const btnBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)";
+  const btnBgHover = isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
+  const btnBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -95,7 +149,8 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Owner admin bar */}
+
+      {/* ── Owner admin bar ──────────────────────────── */}
       {isOwner && (
         <div
           style={{
@@ -129,7 +184,6 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
               background: "#6366f1",
               borderRadius: 8,
               textDecoration: "none",
-              transition: "background 0.15s ease",
             }}
           >
             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
@@ -137,6 +191,132 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
             </svg>
             Back to editor
           </a>
+        </div>
+      )}
+
+      {/* ── Top bar: PageDrop logo (left) + Share (right) ── */}
+      {!isOwner && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 16px",
+          }}
+        >
+          {/* PageDrop logo / claim button */}
+          <a
+            href="/signup"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 12px",
+              borderRadius: 999,
+              background: btnBg,
+              border: `1px solid ${btnBorder}`,
+              backdropFilter: "blur(12px)",
+              textDecoration: "none",
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = btnBgHover)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
+          >
+            <PageDropMark size={18} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: subtleHover, letterSpacing: "-0.01em" }}>
+              PageDrop
+            </span>
+          </a>
+
+          {/* Share button */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                if (typeof navigator.share === "function") {
+                  handleShare();
+                } else {
+                  setShowShareMenu(!showShareMenu);
+                }
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 36,
+                height: 36,
+                borderRadius: 999,
+                background: btnBg,
+                border: `1px solid ${btnBorder}`,
+                backdropFilter: "blur(12px)",
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = btnBgHover)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
+              aria-label="Share this page"
+            >
+              <svg width="16" height="16" fill="none" stroke={subtleHover} viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
+              </svg>
+            </button>
+
+            {/* Share dropdown (non-native fallback) */}
+            {showShareMenu && (
+              <>
+                <div
+                  style={{ position: "fixed", inset: 0, zIndex: 41 }}
+                  onClick={() => setShowShareMenu(false)}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 8px)",
+                    right: 0,
+                    zIndex: 42,
+                    minWidth: 180,
+                    padding: 6,
+                    borderRadius: 12,
+                    background: isDark ? "rgba(30,30,40,0.95)" : "rgba(255,255,255,0.98)",
+                    border: `1px solid ${btnBorder}`,
+                    backdropFilter: "blur(20px)",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
+                  }}
+                >
+                  <button
+                    onClick={() => {
+                      handleShare();
+                      setShowShareMenu(false);
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      width: "100%",
+                      padding: "10px 12px",
+                      border: "none",
+                      background: "transparent",
+                      borderRadius: 8,
+                      cursor: "pointer",
+                      fontSize: 13,
+                      color: isDark ? "#fff" : "#1a1a1a",
+                      textAlign: "left",
+                    }}
+                  >
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    {copied ? "Copied!" : "Copy link"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
 
@@ -152,7 +332,8 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
         />
       )}
 
-      <div style={{ maxWidth: 512, margin: "0 auto", padding: `${isOwner ? 64 : 48}px 16px 48px`, position: "relative", zIndex: 1 }}>
+      {/* ── Main content ─────────────────────────────── */}
+      <div style={{ flex: 1, maxWidth: 512, margin: "0 auto", padding: `${isOwner ? 64 : 60}px 16px 24px`, position: "relative", zIndex: 1, width: "100%" }}>
         {/* Avatar + Name + Bio */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           {user.avatarUrl ? (
@@ -235,12 +416,7 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
                     transition: "transform 0.15s ease, background 0.15s ease",
                   }}
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill={customBgUrl ? "#fff" : meta.color}
-                  >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={customBgUrl ? "#fff" : meta.color}>
                     <path d={meta.icon} />
                   </svg>
                 </a>
@@ -378,14 +554,65 @@ export function PublicProfile({ user, links, services, socialLinks, theme, showB
           </div>
         )}
 
-        {/* Branding */}
-        {showBranding && (
-          <div style={{ textAlign: "center", marginTop: 64 }}>
-            <a href="/" style={{ fontSize: 12, opacity: 0.3, textDecoration: "none", color: customBgUrl ? "#fff" : "inherit" }}>
-              Powered by PageDrop
-            </a>
-          </div>
-        )}
+        {/* ── Join on PageDrop CTA ──────────────────── */}
+        {showBranding && <div style={{ textAlign: "center", marginTop: 40, marginBottom: 24 }}>
+          <a
+            href="/signup"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "12px 24px",
+              borderRadius: 999,
+              background: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"}`,
+              backdropFilter: "blur(12px)",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: 13,
+              color: isDark ? "#fff" : "#1a1a1a",
+              transition: "background 0.2s, transform 0.15s",
+            }}
+          >
+            <PageDropMark size={20} />
+            Join {user.username} on PageDrop
+          </a>
+        </div>}
+      </div>
+
+      {/* ── Page footer: Cookie Preferences · Report · Privacy ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 6,
+          padding: "16px",
+          flexWrap: "wrap",
+        }}
+      >
+        <a href="/cookies" style={{ fontSize: 11, color: subtleColor, textDecoration: "none", transition: "color 0.15s" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = subtleHover)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = subtleColor)}
+        >
+          Cookie Preferences
+        </a>
+        <span style={{ fontSize: 11, color: subtleColor }}>·</span>
+        <a href="mailto:report@page-drop.com?subject=Report%20page%20@{user.username}" style={{ fontSize: 11, color: subtleColor, textDecoration: "none", transition: "color 0.15s" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = subtleHover)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = subtleColor)}
+        >
+          Report
+        </a>
+        <span style={{ fontSize: 11, color: subtleColor }}>·</span>
+        <a href="/privacy" style={{ fontSize: 11, color: subtleColor, textDecoration: "none", transition: "color 0.15s" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = subtleHover)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = subtleColor)}
+        >
+          Privacy
+        </a>
       </div>
     </div>
   );
